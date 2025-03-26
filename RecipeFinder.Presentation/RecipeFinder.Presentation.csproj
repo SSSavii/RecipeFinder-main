@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
+  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RecipeFinder.BusinessLogic\RecipeFinder.BusinessLogic.csproj" />
+		<ProjectReference Include="..\RecipeFinder.DataAccess\RecipeFinder.DataAccess.csproj" />
+		<ProjectReference Include="..\RecipeFinder.Domain\RecipeFinder.Domain.csproj" />
+		<ProjectReference Include="..\RecipeFinder.Infrastructure\RecipeFinder.Infrastructure.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<OutputType>Library</OutputType>
+		<TargetFramework>net8.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- Убираем явное указание на файлы -->
+		<ProjectReference Include="..\RecipeFinder.Domain\RecipeFinder.Domain.csproj" />
+		<ProjectReference Include="..\RecipeFinder.DataAccess\RecipeFinder.DataAccess.csproj" />
+	</ItemGroup>
+</Project>

@@ -1,0 +1,414 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/RecipeFinder.Presentation.csproj": {}
+  },
+  "projects": {
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/RecipeFinder.BusinessLogic.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/RecipeFinder.BusinessLogic.csproj",
+        "projectName": "RecipeFinder.BusinessLogic",
+        "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/RecipeFinder.BusinessLogic.csproj",
+        "packagesPath": "/Users/georgiiisavich/.nuget/packages/",
+        "outputPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/georgiiisavich/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj"
+              },
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj",
+        "projectName": "RecipeFinder.DataAccess",
+        "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj",
+        "packagesPath": "/Users/georgiiisavich/.nuget/packages/",
+        "outputPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/georgiiisavich/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Logging": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[5.27.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj",
+        "projectName": "RecipeFinder.Domain",
+        "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj",
+        "packagesPath": "/Users/georgiiisavich/.nuget/packages/",
+        "outputPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/georgiiisavich/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/RecipeFinder.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/RecipeFinder.Infrastructure.csproj",
+        "projectName": "RecipeFinder.Infrastructure",
+        "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/RecipeFinder.Infrastructure.csproj",
+        "packagesPath": "/Users/georgiiisavich/.nuget/packages/",
+        "outputPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/georgiiisavich/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.Extensions.Configuration": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Microsoft.Extensions.Configuration.Binder": {
+              "target": "Package",
+              "version": "[9.0.3, )"
+            },
+            "Neo4j.Driver": {
+              "target": "Package",
+              "version": "[5.27.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/RecipeFinder.Presentation.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/RecipeFinder.Presentation.csproj",
+        "projectName": "RecipeFinder.Presentation",
+        "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/RecipeFinder.Presentation.csproj",
+        "packagesPath": "/Users/georgiiisavich/.nuget/packages/",
+        "outputPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/georgiiisavich/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/RecipeFinder.BusinessLogic.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.BusinessLogic/RecipeFinder.BusinessLogic.csproj"
+              },
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/RecipeFinder.DataAccess.csproj"
+              },
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/RecipeFinder.Domain.csproj"
+              },
+              "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/RecipeFinder.Infrastructure.csproj": {
+                "projectPath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/RecipeFinder.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        },
+        "SdkAnalysisLevel": "9.0.100"
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.OpenApi": {
+              "target": "Package",
+              "version": "[1.6.23, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "downloadDependencies": [
+            {
+              "name": "Microsoft.AspNetCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Host.osx-arm64",
+              "version": "[8.0.11, 8.0.11]"
+            },
+            {
+              "name": "Microsoft.NETCore.App.Ref",
+              "version": "[8.0.11, 8.0.11]"
+            }
+          ],
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.101/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

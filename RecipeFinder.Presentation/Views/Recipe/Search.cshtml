@@ -1,0 +1,26 @@
+﻿@model IEnumerable<RecipeFinder.Domain.Models.Recipe>
+
+@{
+    ViewData["Title"] = "Результаты поиска";
+}
+
+<h2>Найденные рецепты</h2>
+
+@if (Model != null && Model.Any())
+{
+        <ul>
+        @foreach (var recipe in Model)
+        {
+                    <li>
+                        <strong>@recipe.Name</strong> <br />
+                        <img src="@recipe.Photo" alt="Фото блюда" width="150" /><br />
+                        Время приготовления: @recipe.CookingTime минут <br />
+                        <a href="@recipe.Url" target="_blank">Открыть рецепт</a>
+                    </li>
+        }
+        </ul>
+}
+else
+{
+        <p><strong>Рецептов не найдено.</strong></p>
+}
