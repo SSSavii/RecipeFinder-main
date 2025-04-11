@@ -1,0 +1,13 @@
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/RecipeFinder.Infrastructure.deps.json
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/RecipeFinder.Infrastructure.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/RecipeFinder.Infrastructure.pdb
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.csproj.AssemblyReference.cache
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.AssemblyInfoInputs.cache
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.AssemblyInfo.cs
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.csproj.CoreCompileInputs.cache
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.sourcelink.json
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/refint/RecipeFinder.Infrastructure.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/RecipeFinder.Infrastructure.pdb
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/obj/Release/net8.0/ref/RecipeFinder.Infrastructure.dll

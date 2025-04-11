@@ -4,6 +4,7 @@
 // Write your JavaScript code.
 document.addEventListener("DOMContentLoaded", async () => {
     const ingredientButtons = document.getElementById("ingredient-buttons");
+    const searchButton = document.getElementById("search-button"); // Получаем кнопку поиска
 
     // Загрузка ингредиентов
     const response = await fetch('/Recipe/GetIngredients');
@@ -17,6 +18,9 @@ document.addEventListener("DOMContentLoaded", async () => {
         button.onclick = () => toggleIngredient(button, ingredient);
         ingredientButtons.appendChild(button);
     });
+
+    // Добавляем обработчик события для кнопки поиска
+    searchButton.addEventListener("click", searchRecipes);
 });
 
 const selectedIngredients = new Set();

@@ -1,0 +1,15 @@
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/RecipeFinder.DataAccess.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/RecipeFinder.DataAccess.deps.json
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/RecipeFinder.DataAccess.pdb
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Bcl.AsyncInterfaces.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.DependencyInjection.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.Logging.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.Logging.Abstractions.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.Options.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Microsoft.Extensions.Primitives.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/Neo4j.Driver.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/System.Diagnostics.DiagnosticSource.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/System.IO.Pipelines.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/RecipeFinder.Domain.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.DataAccess/bin/Release/net8.0/publish/RecipeFinder.Domain.pdb

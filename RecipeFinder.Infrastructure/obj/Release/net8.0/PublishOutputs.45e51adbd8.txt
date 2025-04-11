@@ -1,0 +1,10 @@
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/RecipeFinder.Infrastructure.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/RecipeFinder.Infrastructure.deps.json
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/RecipeFinder.Infrastructure.pdb
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Microsoft.Bcl.AsyncInterfaces.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Microsoft.Extensions.Configuration.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Microsoft.Extensions.Configuration.Abstractions.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Microsoft.Extensions.Configuration.Binder.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Microsoft.Extensions.Primitives.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/Neo4j.Driver.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Infrastructure/bin/Release/net8.0/publish/System.IO.Pipelines.dll

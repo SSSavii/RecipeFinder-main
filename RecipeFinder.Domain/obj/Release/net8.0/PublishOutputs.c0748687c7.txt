@@ -1,0 +1,3 @@
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/bin/Release/net8.0/publish/RecipeFinder.Domain.dll
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/bin/Release/net8.0/publish/RecipeFinder.Domain.deps.json
+/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Domain/bin/Release/net8.0/publish/RecipeFinder.Domain.pdb

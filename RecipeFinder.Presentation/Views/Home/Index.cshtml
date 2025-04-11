@@ -1,8 +1,26 @@
 ﻿@{
-    ViewData["Title"] = "Главная";
+    ViewData["Title"] = "Recipe Finder";
 }
-<h1>Добро пожаловать в RecipeFinder!</h1>
-<p>Главная страница с топом выбранных рецептов</p>
-<p>Скорее всего надо будет добавить отдельное поле для счетчика кликов по ссылке в БД</p>
-<a href="/Recipe/Search">Поиск рецептов</a>
-<a href="/Recipe/Search?ingredients=фасоль+белая&ingredients=чеснок&ingredients=тимьян&ingredients=соль&ingredients=мука&ingredients=молоко&ingredients=яйцо&ingredients=сливочное+масло&ingredients=разрыхлитель&ingredients=сахар&ingredients=свекла&ingredients=вода&ingredients=картофель&ingredients=перец&ingredients=сметана&ingredients=лук+репчатый&ingredients=грибы+замороженные">Тестовый GET-запрос</a>
+
+<div class="container">
+    <h1 class="text-center mb-4">Recipe Finder</h1>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <h3>Available Ingredients</h3>
+            <div id="ingredient-buttons" class="d-flex flex-wrap mb-3"></div>
+            
+            <button id="search-button" class="btn btn-success mb-2">Search Recipes</button>
+            <button id="missing-button" class="btn btn-warning mb-2">Find Recipes Missing One Ingredient</button>
+        </div>
+        
+        <div class="col-md-8">
+            <h3>Search Results</h3>
+            <div id="results"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}
