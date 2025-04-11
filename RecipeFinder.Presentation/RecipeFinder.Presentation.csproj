@@ -7,8 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Bootstrap" Version="5.3.5" />
     <PackageReference Include="DotNetEnv" Version="3.1.1" />
+    <PackageReference Include="jQuery" Version="3.7.1" />
     <PackageReference Include="Microsoft.OpenApi" Version="1.6.23" />
+    <PackageReference Include="Neo4j.Driver" Version="5.27.0" />
   </ItemGroup>
 	<ItemGroup>
 		<ProjectReference Include="..\RecipeFinder.BusinessLogic\RecipeFinder.BusinessLogic.csproj" />

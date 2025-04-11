@@ -9,6 +9,7 @@ namespace RecipeFinder.Domain.Models
         public string Photo { get; set; }
         public int CookingTime { get; set; }
         public string Instructions { get; set; }
-        public List<Ingredient> Ingredients { get; set; } = new();
+        public string MissingIngredient { get; set; }
+        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
     }
 }

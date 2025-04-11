@@ -34,18 +34,19 @@ namespace RecipeFinder.DataAccess.Repositories
                 MATCH (r:Recipe)-[:HAS_RECIPE]-(i:Ingredient)
                 WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients
                 WHERE ALL(ri IN recipe_ingredients WHERE ri IN available_ingredients)
-                RETURN r.title, r.url, r.photo_link, r.cooking_time, r.instructions";
+                RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
+                       r.cooking_time AS cooking_time, r.instructions AS instructions";
 
                 var result = await session.RunAsync(query, new { available_ingredients = ingredients });
 
                 var recipes = (await result.ToListAsync()).Select(record =>
                     new Recipe
                     {
-                        Name = record["r.title"].As<string>(),
-                        Url = record["r.url"].As<string>(),
-                        Photo = record["r.photo_link"].As<string>(),
-                        CookingTime = Convert.ToInt32(record["r.cooking_time"]),
-                        Instructions = record["r.instructions"].As<string>()
+                        Name = record["title"].As<string>(),
+                        Url = record["url"].As<string>(),
+                        Photo = record["photo"].As<string>(),
+                        CookingTime = record["cooking_time"].As<int>(),
+                        Instructions = record["instructions"].As<string>()
                     }
                 ).ToList();
 
@@ -68,7 +69,8 @@ namespace RecipeFinder.DataAccess.Repositories
                 var session = _driver.AsyncSession();
                 var query = @"
                 MATCH (i:Ingredient)
-                RETURN DISTINCT i.name AS name";
+                RETURN DISTINCT i.name AS name
+                ORDER BY i.name";
 
                 var result = await session.RunAsync(query);
 
@@ -99,22 +101,25 @@ namespace RecipeFinder.DataAccess.Repositories
                 WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients,
                      [ri IN recipe_ingredients WHERE NOT ri IN available_ingredients] AS missing_ingredients
                 WHERE SIZE(missing_ingredients) <= 1
-                RETURN r.title, r.url, r.photo_link, r.cooking_time, r.instructions, SIZE(missing_ingredients) AS missing_count";
+                RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
+                       r.cooking_time AS cooking_time, r.instructions AS instructions,
+                       CASE WHEN SIZE(missing_ingredients) > 0 THEN missing_ingredients[0] ELSE null END AS missing_ingredient";
 
                 var result = await session.RunAsync(query, new { available_ingredients = ingredients });
 
                 var recipes = (await result.ToListAsync()).Select(record =>
                     new Recipe
                     {
-                        Name = record["r.title"].As<string>(),
-                        Url = record["r.url"].As<string>(),
-                        Photo = record["r.photo_link"].As<string>(),
-                        CookingTime = Convert.ToInt32(record["r.cooking_time"]),
-                        Instructions = record["r.instructions"].As<string>()
+                        Name = record["title"].As<string>(),
+                        Url = record["url"].As<string>(),
+                        Photo = record["photo"].As<string>(),
+                        CookingTime = record["cooking_time"].As<int>(),
+                        Instructions = record["instructions"].As<string>(),
+                        MissingIngredient = record["missing_ingredient"].As<string>()
                     }
                 ).ToList();
 
-                _logger.LogInformation("Found {RecipeCount} recipes.", recipes.Count);
+                _logger.LogInformation("Found {RecipeCount} recipes with missing ingredients.", recipes.Count);
                 return recipes;
             }
             catch (Exception ex)

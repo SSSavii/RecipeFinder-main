@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "tjDXQznZEUs=",
+  "dgSpecHash": "Qdna4AaTbJY=",
   "success": true,
   "projectFilePath": "/Users/georgiiisavich/Desktop/RecipeFinder-main/RecipeFinder.Presentation/RecipeFinder.Presentation.csproj",
   "expectedPackageFiles": [
+    "/Users/georgiiisavich/.nuget/packages/bootstrap/5.3.5/bootstrap.5.3.5.nupkg.sha512",
     "/Users/georgiiisavich/.nuget/packages/dotnetenv/3.1.1/dotnetenv.3.1.1.nupkg.sha512",
+    "/Users/georgiiisavich/.nuget/packages/jquery/3.7.1/jquery.3.7.1.nupkg.sha512",
     "/Users/georgiiisavich/.nuget/packages/microsoft.bcl.asyncinterfaces/5.0.0/microsoft.bcl.asyncinterfaces.5.0.0.nupkg.sha512",
     "/Users/georgiiisavich/.nuget/packages/microsoft.extensions.configuration/9.0.3/microsoft.extensions.configuration.9.0.3.nupkg.sha512",
     "/Users/georgiiisavich/.nuget/packages/microsoft.extensions.configuration.abstractions/9.0.3/microsoft.extensions.configuration.abstractions.9.0.3.nupkg.sha512",

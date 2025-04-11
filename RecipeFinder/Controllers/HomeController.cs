@@ -1,16 +1,17 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using RecipeFinder.Models;
+using RecipeFinder.BusinessLogic.Interfaces;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace RecipeFinder.Controllers
+namespace RecipeFinder.Presentation.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly IRecipeService _recipeService;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(IRecipeService recipeService)
         {
-            _logger = logger;
+            _recipeService = recipeService;
         }
 
         public IActionResult Index()
@@ -18,15 +19,24 @@ namespace RecipeFinder.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpGet]
+        public async Task<JsonResult> GetAllIngredients()
         {
-            return View();
+            var ingredients = await _recipeService.GetAllIngredientsAsync();
+            return Json(ingredients);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public async Task<JsonResult> GetRecipes([FromBody] string[] ingredients)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            var exactMatchRecipes = await _recipeService.GetRecipesByIngredientsAsync(ingredients);
+            var missingOneRecipes = await _recipeService.GetRecipesWithMissingOneAsync(ingredients);
+
+            return Json(new 
+            {
+                ExactMatches = exactMatchRecipes,
+                MissingOneMatches = missingOneRecipes
+            });
         }
     }
 }

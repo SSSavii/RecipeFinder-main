@@ -2,25 +2,184 @@
     ViewData["Title"] = "Recipe Finder";
 }
 
-<div class="container">
+<div class="container mt-5">
     <h1 class="text-center mb-4">Recipe Finder</h1>
     
-    <div class="row">
-        <div class="col-md-4">
-            <h3>Available Ingredients</h3>
-            <div id="ingredient-buttons" class="d-flex flex-wrap mb-3"></div>
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <!-- Поисковая строка -->
+            <div class="mb-4 position-relative">
+                <div class="input-group input-group-lg">
+                    <input type="text" id="ingredientSearch" class="form-control" 
+                           placeholder="Click to select ingredients..." readonly
+                           style="font-size: 1.25rem; height: 50px; cursor: pointer;">
+                    <button class="btn btn-primary" id="findRecipesBtn" disabled style="height: 50px;">
+                        <i class="bi bi-search"></i> Find Recipes
+                    </button>
+                </div>
+                
+                <!-- Выпадающий список -->
+                <div class="dropdown-menu w-100 p-0" id="ingredientsDropdown" 
+                     style="display: none; max-height: 300px; overflow-y: auto;">
+                    <div class="list-group" id="ingredientsList">
+                        <!-- Ингредиенты будут загружены здесь -->
+                    </div>
+                </div>
+            </div>
             
-            <button id="search-button" class="btn btn-success mb-2">Search Recipes</button>
-            <button id="missing-button" class="btn btn-warning mb-2">Find Recipes Missing One Ingredient</button>
-        </div>
-        
-        <div class="col-md-8">
-            <h3>Search Results</h3>
-            <div id="results"></div>
+            <!-- Выбранные ингредиенты -->
+            <div class="mb-4">
+                <div id="selectedIngredients" class="d-flex flex-wrap gap-2"></div>
+            </div>
+            
+            <!-- Результаты поиска -->
+            <div id="recipesContainer" class="mt-4">
+                <div id="exactMatchesSection" class="mb-4 d-none">
+                    <h3><i class="bi bi-check-circle-fill text-success"></i> Exact Matches</h3>
+                    <div id="exactMatches" class="row"></div>
+                </div>
+                
+                <div id="missingOneSection" class="mb-4 d-none">
+                    <h3><i class="bi bi-exclamation-circle-fill text-warning"></i> Missing One Ingredient</h3>
+                    <div id="missingOneMatches" class="row"></div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
+@section Styles {
+    <style>
+        #ingredientSearch {
+            background-color: white;
+        }
+        .ingredient-item {
+            cursor: pointer;
+            padding: 0.75rem 1.25rem;
+            border: none;
+            border-bottom: 1px solid #eee;
+        }
+        .ingredient-item:hover {
+            background-color: #f8f9fa;
+        }
+        .selected-ingredient {
+            font-size: 1.1rem;
+            padding: 0.5rem 1rem;
+        }
+        #ingredientsDropdown {
+            z-index: 1000;
+        }
+    </style>
+}
+
 @section Scripts {
-    <script src="~/js/site.js"></script>
+    <script>
+        $(document).ready(function() {
+            const selectedIngredients = [];
+            let allIngredients = [];
+
+            // Показать/скрыть список при клике
+            $('#ingredientSearch').click(function(e) {
+                e.stopPropagation();
+                if ($('#ingredientsDropdown').is(':visible')) {
+                    $('#ingredientsDropdown').hide();
+                } else {
+                    loadIngredients();
+                    $('#ingredientsDropdown').show();
+                }
+            });
+
+            // Загрузка ингредиентов
+            async function loadIngredients() {
+                if (allIngredients.length === 0) {
+                    try {
+                        $('#ingredientsList').html('<div class="text-center p-3"><div class="spinner-border"></div></div>');
+                        
+                        const response = await $.get('/Home/GetAllIngredients');
+                        allIngredients = response;
+                        renderIngredientsList();
+                    } catch (error) {
+                        console.error('Error:', error);
+                        $('#ingredientsList').html('<div class="text-danger p-3">Error loading ingredients</div>');
+                    }
+                }
+            }
+
+            // Рендер списка ингредиентов
+            function renderIngredientsList() {
+                const container = $('#ingredientsList');
+                container.empty();
+                
+                allIngredients.forEach(ingredient => {
+                    if (!selectedIngredients.includes(ingredient)) {
+                        const item = $(`<button type="button" class="list-group-item ingredient-item">${ingredient}</button>`);
+                        item.click(function(e) {
+                            e.stopPropagation();
+                            selectedIngredients.push(ingredient);
+                            renderSelectedIngredients();
+                            $('#ingredientsDropdown').hide();
+                            $('#findRecipesBtn').prop('disabled', false);
+                        });
+                        container.append(item);
+                    }
+                });
+            }
+
+            // Рендер выбранных ингредиентов
+            function renderSelectedIngredients() {
+                const container = $('#selectedIngredients');
+                container.empty();
+                
+                selectedIngredients.forEach(ingredient => {
+                    const badge = $(`
+                        <div class="badge bg-primary selected-ingredient d-flex align-items-center">
+                            ${ingredient}
+                            <button class="btn-close btn-close-white ms-2 remove-ingredient"></button>
+                        </div>
+                    `);
+                    badge.find('.remove-ingredient').click(function() {
+                        const index = selectedIngredients.indexOf(ingredient);
+                        if (index > -1) {
+                            selectedIngredients.splice(index, 1);
+                            renderSelectedIngredients();
+                            $('#findRecipesBtn').prop('disabled', selectedIngredients.length === 0);
+                        }
+                    });
+                    container.append(badge);
+                });
+            }
+
+            // Поиск рецептов
+            $('#findRecipesBtn').click(async function() {
+                if (selectedIngredients.length > 0) {
+                    try {
+                        $(this).prop('disabled', true)
+                            .html('<span class="spinner-border spinner-border-sm"></span> Searching...');
+                        
+                        const response = await $.ajax({
+                            url: '/Home/GetRecipes',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(selectedIngredients)
+                        });
+
+                        renderRecipes(response);
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('Error searching recipes');
+                    } finally {
+                        $(this).prop('disabled', false).html('<i class="bi bi-search"></i> Find Recipes');
+                    }
+                }
+            });
+
+            // Закрытие при клике вне области
+            $(document).click(function() {
+                $('#ingredientsDropdown').hide();
+            });
+
+            // Инициализация
+            renderSelectedIngredients();
+        });
+    </script>
 }
