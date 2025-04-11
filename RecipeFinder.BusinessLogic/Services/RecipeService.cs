@@ -20,5 +20,15 @@ namespace RecipeFinder.BusinessLogic.Services
             var recipes = await _recipeRepository.FindByIngredientsAsync(ingredients);
             return recipes ?? new List<Recipe>();
         }
+
+        public async Task<IEnumerable<string>> GetAllIngredientsAsync()
+        {
+            return await _recipeRepository.GetAllIngredientsAsync();
+        }
+
+        public async Task<IEnumerable<Recipe>> GetRecipesWithMissingOneAsync(string[] ingredients)
+        {
+            return await _recipeRepository.FindByIngredientsWithMissingOneAsync(ingredients);
+        }
     }
 }
