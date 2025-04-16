@@ -12,28 +12,41 @@ public class RecipeController : Controller
         _recipeService = recipeService;
     }
 
-    public async Task<IActionResult> Search(string[] ingredients)
-    {
-        if (ingredients == null || ingredients.Length == 0)
-        {
-            return View(new List<RecipeFinder.Domain.Models.Recipe>());
-        }
-
-        var recipes = await _recipeService.GetRecipesByIngredientsAsync(ingredients);
-        return View(recipes ?? new List<RecipeFinder.Domain.Models.Recipe>());
-    }
-
-    [HttpGet]
-    public async Task<IActionResult> GetIngredients()
+    // Метод для отображения страницы поиска
+    public async Task<IActionResult> Search()
     {
         var ingredients = await _recipeService.GetAllIngredientsAsync();
-        return Json(ingredients);
+        return View(ingredients); // Передаем список ингредиентов в представление
     }
 
+    // Метод для поиска рецептов с учётом недостающих ингредиентов
     [HttpPost]
-    public async Task<IActionResult> SearchWithMissing(string[] ingredients)
+    public async Task<IActionResult> SearchWithMissing([FromBody] List<string> ingredients)
     {
-        var recipes = await _recipeService.GetRecipesWithMissingOneAsync(ingredients);
-        return Json(recipes);
+        if (ingredients == null || ingredients.Count == 0)
+        {
+            return Json(new List<object>()); // Возвращаем пустой список, если ингредиенты отсутствуют
+        }
+
+        try
+        {
+            var recipes = await _recipeService.GetRecipesWithMissingOneAsync(ingredients.ToArray());
+
+            // Возвращаем список рецептов с недостающими ингредиентами
+            return Json(recipes.Select(r => new
+            {
+                name = r.Name,
+                photo = r.Photo,
+                cookingTime = r.CookingTime,
+                url = r.Url,
+                missingIngredient = r.MissingIngredient
+            }));
+        }
+        catch (Exception ex)
+        {
+            // Логируем ошибку и возвращаем сообщение об ошибке
+            Console.WriteLine("Ошибка на сервере: " + ex.Message);
+            return StatusCode(500, new { error = "Произошла ошибка при обработке запроса." });
+        }
     }
 }

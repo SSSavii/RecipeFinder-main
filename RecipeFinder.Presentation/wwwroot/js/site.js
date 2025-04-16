@@ -1,54 +1,21 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿document.addEventListener("DOMContentLoaded", async () => {
+    const searchButton = document.getElementById("search-button");
 
-// Write your JavaScript code.
-document.addEventListener("DOMContentLoaded", async () => {
-    const ingredientButtons = document.getElementById("ingredient-buttons");
-    const searchButton = document.getElementById("search-button"); // Получаем кнопку поиска
+    // Обработка поиска рецептов
+    searchButton.addEventListener("click", async () => {
+        const select = document.getElementById("ingredient-select");
+        const selectedIngredients = Array.from(select.selectedOptions).map(option => option.value);
 
-    // Загрузка ингредиентов
-    const response = await fetch('/Recipe/GetIngredients');
-    const ingredients = await response.json();
+        const response = await fetch('/Recipe/SearchWithMissing', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(selectedIngredients)
+        });
 
-    // Создание кнопок для ингредиентов
-    ingredients.forEach(ingredient => {
-        const button = document.createElement('button');
-        button.textContent = ingredient;
-        button.className = 'ingredient-button';
-        button.onclick = () => toggleIngredient(button, ingredient);
-        ingredientButtons.appendChild(button);
+        const recipes = await response.json();
+        displayRecipes(recipes);
     });
-
-    // Добавляем обработчик события для кнопки поиска
-    searchButton.addEventListener("click", searchRecipes);
 });
-
-const selectedIngredients = new Set();
-
-// Переключение состояния кнопок ингредиентов
-function toggleIngredient(button, ingredient) {
-    if (selectedIngredients.has(ingredient)) {
-        selectedIngredients.delete(ingredient);
-        button.classList.remove('selected');
-    } else {
-        selectedIngredients.add(ingredient);
-        button.classList.add('selected');
-    }
-}
-
-// Обработка поиска рецептов
-async function searchRecipes() {
-    const response = await fetch('/Recipe/Search', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(Array.from(selectedIngredients))
-    });
-
-    const recipes = await response.json();
-    displayRecipes(recipes);
-}
 
 // Отображение рецептов
 function displayRecipes(recipes) {

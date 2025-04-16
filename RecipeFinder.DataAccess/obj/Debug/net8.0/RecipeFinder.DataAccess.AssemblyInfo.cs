@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RecipeFinder.DataAccess")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+079fc2bbf756dcfb88710ce3167dcebd6a01ed1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ff6b1a6685f4ba168750aa517f0f9ff6c1fa5e8")]
 [assembly: System.Reflection.AssemblyProductAttribute("RecipeFinder.DataAccess")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RecipeFinder.DataAccess")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

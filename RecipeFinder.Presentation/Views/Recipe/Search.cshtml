@@ -1,26 +1,151 @@
-﻿@model IEnumerable<RecipeFinder.Domain.Models.Recipe>
+﻿@model List<string> 
 
-@{
-    ViewData["Title"] = "Результаты поиска";
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Поиск рецептов</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="/css/site.css" rel="stylesheet" />
+</head>
+<body>
+    <h1>Поиск рецептов</h1>
 
-<h2>Найденные рецепты</h2>
+    <!-- Строка поиска -->
+    <div id="search-container">
+        <label for="ingredient-search">Выбранные ингредиенты:</label>
+        <div id="selected-ingredients-container">
+            <!-- Здесь будут отображаться выбранные ингредиенты -->
+        </div>
+    </div>
 
-@if (Model != null && Model.Any())
-{
-        <ul>
-        @foreach (var recipe in Model)
-        {
-                    <li>
-                        <strong>@recipe.Name</strong> <br />
-                        <img src="@recipe.Photo" alt="Фото блюда" width="150" /><br />
-                        Время приготовления: @recipe.CookingTime минут <br />
-                        <a href="@recipe.Url" target="_blank">Открыть рецепт</a>
-                    </li>
-        }
-        </ul>
-}
-else
-{
-        <p><strong>Рецептов не найдено.</strong></p>
-}
+    <!-- Поле ввода с фильтруемым выпадающим списком -->
+    <div>
+        <label for="ingredient-input">Добавить ингредиенты:</label>
+        <input id="ingredient-input" type="text" placeholder="Начните вводить ингредиент..." />
+        <div id="ingredient-dropdown" class="dropdown">
+            <!-- Сюда будут добавляться отфильтрованные варианты -->
+        </div>
+    </div>
+
+    <!-- Кнопка поиска -->
+    <button id="search-button">Поиск</button>
+
+    <!-- Результаты поиска -->
+    <div id="results"></div>
+
+    <script>
+        $(document).ready(function () {
+            const selectedIngredients = new Set(); // Хранит выбранные ингредиенты
+            <script>
+                const allIngredients = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
+            </script>
+
+            // Обновление выпадающего списка по введенному тексту
+            $('#ingredient-input').on('input', function () {
+                const query = $(this).val().toLowerCase();
+                const filteredIngredients = allIngredients.filter(ingredient => 
+                    ingredient.toLowerCase().includes(query)
+                );
+
+                updateDropdown(filteredIngredients);
+            });
+
+            // Добавление ингредиента из выпадающего списка
+            $(document).on('click', '.dropdown-item', function () {
+                const ingredient = $(this).text();
+                if (!selectedIngredients.has(ingredient)) {
+                    selectedIngredients.add(ingredient);
+                    updateSelectedIngredients();
+                }
+                $('#ingredient-input').val(''); // Очищаем поле после добавления
+                updateDropdown([]); // Очищаем выпадающий список
+            });
+
+            // Удаление ингредиента
+            $(document).on('click', '.remove-ingredient', function () {
+                const ingredient = $(this).data('ingredient');
+                selectedIngredients.delete(ingredient);
+                updateSelectedIngredients();
+            });
+
+            // Обработка поиска рецептов
+            $('#search-button').on('click', function () {
+                const ingredients = Array.from(selectedIngredients);
+
+                fetch('/Recipe/SearchWithMissing', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(ingredients)
+                })
+                .then(response => {
+                    if (!response.ok) throw new Error("Ошибка при загрузке рецептов.");
+                    return response.json();
+                })
+                .then(recipes => {
+                    displayRecipes(recipes);
+                })
+                .catch(error => {
+                    console.error('Ошибка:', error);
+                    alert('Произошла ошибка при поиске рецептов.');
+                });
+            });
+
+            // Отображение выбранных ингредиентов
+            function updateSelectedIngredients() {
+                const container = $('#selected-ingredients-container');
+                container.empty();
+
+                selectedIngredients.forEach(ingredient => {
+                    container.append(`
+                        <span class="ingredient">
+                            ${ingredient}
+                            <button class="remove-ingredient" data-ingredient="${ingredient}">x</button>
+                        </span>
+                    `);
+                });
+            }
+
+            // Обновление выпадающего списка
+            function updateDropdown(ingredients) {
+                const dropdown = $('#ingredient-dropdown');
+                dropdown.empty();
+
+                if (ingredients.length > 0) {
+                    ingredients.forEach(ingredient => {
+                        dropdown.append(`<div class="dropdown-item">${ingredient}</div>`);
+                    });
+                }
+            }
+
+            // Отображение рецептов
+            function displayRecipes(recipes) {
+                const resultsDiv = $('#results');
+                resultsDiv.empty();
+
+                if (recipes.length === 0) {
+                    resultsDiv.append('<p>Ничего не найдено.</p>');
+                    return;
+                }
+
+                recipes.forEach(recipe => {
+                    const missingIngredient = recipe.missingIngredient
+                        ? `<p><strong>Не хватает:</strong> ${recipe.missingIngredient}</p>`
+                        : '';
+
+                    const recipeHtml = `
+                        <div class="recipe">
+                            <h3>${recipe.name}</h3>
+                            <img src="${recipe.photo}" alt="${recipe.name}" />
+                            <p>Время приготовления: ${recipe.cookingTime} минут</p>
+                            ${missingIngredient}
+                            <a href="${recipe.url}" target="_blank">Перейти к рецепту</a>
+                        </div>
+                    `;
+                    resultsDiv.append(recipeHtml);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
