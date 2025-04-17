@@ -20,45 +20,45 @@ namespace RecipeFinder.DataAccess.Repositories
             _logger = logger;
         }
 
-        public async Task<IEnumerable<Recipe>> FindByIngredientsAsync(string[] ingredients)
-        {
-            _logger.LogInformation("Ingredients passed to query: {Ingredients}", string.Join(", ", ingredients));
+       public async Task<IEnumerable<Recipe>> FindByIngredientsAsync(string[] ingredients)
+{
+    _logger.LogInformation("Ingredients passed to query: {Ingredients}", string.Join(", ", ingredients));
 
-            try
+    try
+    {
+        _logger.LogInformation("Connecting to Neo4j...");
+
+        var session = _driver.AsyncSession();
+        var query = @"
+        WITH $available_ingredients AS available_ingredients
+        MATCH (r:Recipe)-[:HAS_RECIPE]-(i:Ingredient)
+        WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients
+        WHERE ANY(ri IN recipe_ingredients WHERE ri IN available_ingredients)
+        RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
+               r.cooking_time AS cooking_time, r.instructions AS instructions";
+
+        var result = await session.RunAsync(query, new { available_ingredients = ingredients });
+
+        var recipes = (await result.ToListAsync()).Select(record =>
+            new Recipe
             {
-                _logger.LogInformation("Connecting to Neo4j...");
-
-                var session = _driver.AsyncSession();
-                var query = @"
-                WITH $available_ingredients AS available_ingredients
-                MATCH (r:Recipe)-[:HAS_RECIPE]-(i:Ingredient)
-                WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients
-                WHERE ALL(ri IN recipe_ingredients WHERE ri IN available_ingredients)
-                RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
-                       r.cooking_time AS cooking_time, r.instructions AS instructions";
-
-                var result = await session.RunAsync(query, new { available_ingredients = ingredients });
-
-                var recipes = (await result.ToListAsync()).Select(record =>
-                    new Recipe
-                    {
-                        Name = record["title"].As<string>(),
-                        Url = record["url"].As<string>(),
-                        Photo = record["photo"].As<string>(),
-                        CookingTime = record["cooking_time"].As<int>(),
-                        Instructions = record["instructions"].As<string>()
-                    }
-                ).ToList();
-
-                _logger.LogInformation("Found {RecipeCount} recipes.", recipes.Count);
-                return recipes;
+                Name = record["title"].As<string>(),
+                Url = record["url"].As<string>(),
+                Photo = record["photo"].As<string>(),
+                CookingTime = record["cooking_time"].As<int>(),
+                Instructions = record["instructions"].As<string>()
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while executing the Neo4j query.");
-                throw;
-            }
-        }
+        ).ToList();
+
+        _logger.LogInformation("Found {RecipeCount} recipes.", recipes.Count);
+        return recipes;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while executing the Neo4j query.");
+        throw;
+    }
+}
 
         public async Task<IEnumerable<string>> GetAllIngredientsAsync()
         {
@@ -89,44 +89,45 @@ namespace RecipeFinder.DataAccess.Repositories
         }
 
         public async Task<IEnumerable<Recipe>> FindByIngredientsWithMissingOneAsync(string[] ingredients)
-        {
-            _logger.LogInformation("Fetching recipes with up to one missing ingredient...");
+{
+    _logger.LogInformation("Fetching recipes with up to one missing ingredient...");
 
-            try
+    try
+    {
+        var session = _driver.AsyncSession();
+        var query = @"
+        WITH $available_ingredients AS available_ingredients
+        MATCH (r:Recipe)-[:HAS_RECIPE]-(i:Ingredient)
+        WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients
+        WITH r, recipe_ingredients, available_ingredients,
+             [ri IN recipe_ingredients WHERE NOT ri IN available_ingredients] AS missing_ingredients
+        WHERE SIZE(missing_ingredients) <= 1
+        RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
+               r.cooking_time AS cooking_time, r.instructions AS instructions,
+               CASE WHEN SIZE(missing_ingredients) > 0 THEN missing_ingredients[0] ELSE null END AS missing_ingredient";
+
+        var result = await session.RunAsync(query, new { available_ingredients = ingredients });
+
+        var recipes = (await result.ToListAsync()).Select(record =>
+            new Recipe
             {
-                var session = _driver.AsyncSession();
-                var query = @"
-                WITH $available_ingredients AS available_ingredients
-                MATCH (r:Recipe)-[:HAS_RECIPE]-(i:Ingredient)
-                WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients,
-                     [ri IN recipe_ingredients WHERE NOT ri IN available_ingredients] AS missing_ingredients
-                WHERE SIZE(missing_ingredients) <= 1
-                RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
-                       r.cooking_time AS cooking_time, r.instructions AS instructions,
-                       CASE WHEN SIZE(missing_ingredients) > 0 THEN missing_ingredients[0] ELSE null END AS missing_ingredient";
-
-                var result = await session.RunAsync(query, new { available_ingredients = ingredients });
-
-                var recipes = (await result.ToListAsync()).Select(record =>
-                    new Recipe
-                    {
-                        Name = record["title"].As<string>(),
-                        Url = record["url"].As<string>(),
-                        Photo = record["photo"].As<string>(),
-                        CookingTime = record["cooking_time"].As<int>(),
-                        Instructions = record["instructions"].As<string>(),
-                        MissingIngredient = record["missing_ingredient"].As<string>()
-                    }
-                ).ToList();
-
-                _logger.LogInformation("Found {RecipeCount} recipes with missing ingredients.", recipes.Count);
-                return recipes;
+                Name = record["title"].As<string>(),
+                Url = record["url"].As<string>(),
+                Photo = record["photo"].As<string>(),
+                CookingTime = record["cooking_time"].As<int>(),
+                Instructions = record["instructions"].As<string>(),
+                MissingIngredient = record["missing_ingredient"].As<string?>() // ✅ безопасно
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error while fetching recipes.");
-                throw;
-            }
-        }
+        ).ToList();
+
+        _logger.LogInformation("Found {RecipeCount} recipes with missing ingredients.", recipes.Count);
+        return recipes;
+    }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Error while fetching recipes with missing ingredients.");
+        throw;
+    }
+}
     }
 }

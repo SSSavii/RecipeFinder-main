@@ -12,41 +12,31 @@ public class RecipeController : Controller
         _recipeService = recipeService;
     }
 
-    // Метод для отображения страницы поиска
+    [HttpGet]
     public async Task<IActionResult> Search()
     {
-        var ingredients = await _recipeService.GetAllIngredientsAsync();
-        return View(ingredients); // Передаем список ингредиентов в представление
+        try
+        {
+            var ingredients = await _recipeService.GetAllIngredientsAsync();
+            return View(new List<string>(ingredients)); // Явное преобразование в List<string>
+        }
+        catch
+        {
+            return View(new List<string>());
+        }
     }
 
-    // Метод для поиска рецептов с учётом недостающих ингредиентов
     [HttpPost]
     public async Task<IActionResult> SearchWithMissing([FromBody] List<string> ingredients)
     {
-        if (ingredients == null || ingredients.Count == 0)
-        {
-            return Json(new List<object>()); // Возвращаем пустой список, если ингредиенты отсутствуют
-        }
-
         try
         {
             var recipes = await _recipeService.GetRecipesWithMissingOneAsync(ingredients.ToArray());
-
-            // Возвращаем список рецептов с недостающими ингредиентами
-            return Json(recipes.Select(r => new
-            {
-                name = r.Name,
-                photo = r.Photo,
-                cookingTime = r.CookingTime,
-                url = r.Url,
-                missingIngredient = r.MissingIngredient
-            }));
+            return Json(new { success = true, data = recipes });
         }
-        catch (Exception ex)
+        catch
         {
-            // Логируем ошибку и возвращаем сообщение об ошибке
-            Console.WriteLine("Ошибка на сервере: " + ex.Message);
-            return StatusCode(500, new { error = "Произошла ошибка при обработке запроса." });
+            return StatusCode(500, new { success = false });
         }
     }
 }

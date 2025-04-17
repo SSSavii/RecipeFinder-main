@@ -1,65 +1,105 @@
-﻿@model List<string> 
+﻿@model List<string>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Поиск рецептов</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="/css/site.css" rel="stylesheet" />
+    <style>
+        .ingredient-tag {
+            display: inline-block;
+            background: #e0e0e0;
+            padding: 5px 10px;
+            margin: 5px;
+            border-radius: 15px;
+        }
+        .remove-ingredient {
+            margin-left: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: #ff0000;
+        }
+        #ingredient-dropdown {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            width: 300px;
+        }
+        .dropdown-item {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .dropdown-item:hover {
+            background-color: #f5f5f5;
+        }
+        .recipe {
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        #loading-spinner {
+            display: none;
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Поиск рецептов</h1>
+    <div class="container">
+        <h1>Поиск рецептов</h1>
 
-    <!-- Строка поиска -->
-    <div id="search-container">
-        <label for="ingredient-search">Выбранные ингредиенты:</label>
-        <div id="selected-ingredients-container">
-            <!-- Здесь будут отображаться выбранные ингредиенты -->
+        <div class="search-section">
+            <div class="selected-ingredients">
+                <label>Выбранные ингредиенты:</label>
+                <div id="selected-ingredients-container"></div>
+            </div>
+
+            <div class="ingredient-input">
+                <label for="ingredient-input">Добавить ингредиент:</label>
+                <input id="ingredient-input" type="text" placeholder="Начните вводить..." />
+                <div id="ingredient-dropdown"></div>
+            </div>
+
+            <button id="search-button" class="btn btn-primary">Найти рецепты</button>
+            <div id="loading-spinner">Загрузка...</div>
         </div>
+
+        <div id="results" class="results-container"></div>
     </div>
 
-    <!-- Поле ввода с фильтруемым выпадающим списком -->
-    <div>
-        <label for="ingredient-input">Добавить ингредиенты:</label>
-        <input id="ingredient-input" type="text" placeholder="Начните вводить ингредиент..." />
-        <div id="ingredient-dropdown" class="dropdown">
-            <!-- Сюда будут добавляться отфильтрованные варианты -->
-        </div>
-    </div>
-
-    <!-- Кнопка поиска -->
-    <button id="search-button">Поиск</button>
-
-    <!-- Результаты поиска -->
-    <div id="results"></div>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
-            const selectedIngredients = new Set(); // Хранит выбранные ингредиенты
-            <script>
-                const allIngredients = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model));
-            </script>
+            const selectedIngredients = new Set();
+            const allIngredients = @Html.Raw(Json.Serialize(Model));
 
-            // Обновление выпадающего списка по введенному тексту
+            // Поиск ингредиентов при вводе
             $('#ingredient-input').on('input', function () {
                 const query = $(this).val().toLowerCase();
-                const filteredIngredients = allIngredients.filter(ingredient => 
-                    ingredient.toLowerCase().includes(query)
-                );
+                if (query.length < 2) {
+                    $('#ingredient-dropdown').empty();
+                    return;
+                }
 
-                updateDropdown(filteredIngredients);
+                const filtered = allIngredients.filter(i => i.toLowerCase().includes(query));
+                updateDropdown(filtered);
             });
 
-            // Добавление ингредиента из выпадающего списка
+            // Добавление ингредиента
             $(document).on('click', '.dropdown-item', function () {
                 const ingredient = $(this).text();
                 if (!selectedIngredients.has(ingredient)) {
                     selectedIngredients.add(ingredient);
                     updateSelectedIngredients();
                 }
-                $('#ingredient-input').val(''); // Очищаем поле после добавления
-                updateDropdown([]); // Очищаем выпадающий список
+                $('#ingredient-input').val('').focus();
+                $('#ingredient-dropdown').empty();
             });
 
             // Удаление ингредиента
@@ -69,80 +109,97 @@
                 updateSelectedIngredients();
             });
 
-            // Обработка поиска рецептов
+            // Поиск рецептов
             $('#search-button').on('click', function () {
-                const ingredients = Array.from(selectedIngredients);
+                if (selectedIngredients.size === 0) {
+                    alert('Пожалуйста, выберите хотя бы один ингредиент');
+                    return;
+                }
 
-                fetch('/Recipe/SearchWithMissing', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(ingredients)
-                })
-                .then(response => {
-                    if (!response.ok) throw new Error("Ошибка при загрузке рецептов.");
-                    return response.json();
-                })
-                .then(recipes => {
-                    displayRecipes(recipes);
-                })
-                .catch(error => {
-                    console.error('Ошибка:', error);
-                    alert('Произошла ошибка при поиске рецептов.');
+                const ingredients = Array.from(selectedIngredients);
+                console.log('Searching for:', ingredients);
+
+                $('#loading-spinner').show();
+                $('#results').empty();
+
+                $.ajax({
+                    url: '/Recipe/SearchWithMissing',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(ingredients),
+                    success: function (response) {
+                        if (response.success) {
+                            displayRecipes(response.data);
+                        } else {
+                            alert('Ошибка: ' + response.message);
+                        }
+                    },
+                    error: function (xhr) {
+                        let errorMsg = 'Произошла ошибка при поиске';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMsg += ': ' + response.message;
+                        } catch (e) {
+                            errorMsg += ' (код ' + xhr.status + ')';
+                        }
+                        alert(errorMsg);
+                        console.error('Error details:', xhr);
+                    },
+                    complete: function () {
+                        $('#loading-spinner').hide();
+                    }
                 });
             });
 
-            // Отображение выбранных ингредиентов
             function updateSelectedIngredients() {
                 const container = $('#selected-ingredients-container');
                 container.empty();
-
                 selectedIngredients.forEach(ingredient => {
                     container.append(`
-                        <span class="ingredient">
+                        <span class="ingredient-tag">
                             ${ingredient}
-                            <button class="remove-ingredient" data-ingredient="${ingredient}">x</button>
+                            <button class="remove-ingredient" data-ingredient="${ingredient}">×</button>
                         </span>
                     `);
                 });
             }
 
-            // Обновление выпадающего списка
-            function updateDropdown(ingredients) {
+            function updateDropdown(items) {
                 const dropdown = $('#ingredient-dropdown');
                 dropdown.empty();
-
-                if (ingredients.length > 0) {
-                    ingredients.forEach(ingredient => {
-                        dropdown.append(`<div class="dropdown-item">${ingredient}</div>`);
+                
+                if (items.length > 0) {
+                    items.slice(0, 10).forEach(item => {
+                        dropdown.append(`<div class="dropdown-item">${item}</div>`);
                     });
+                } else {
+                    dropdown.append('<div class="dropdown-item">Ничего не найдено</div>');
                 }
             }
 
-            // Отображение рецептов
             function displayRecipes(recipes) {
                 const resultsDiv = $('#results');
                 resultsDiv.empty();
 
                 if (recipes.length === 0) {
-                    resultsDiv.append('<p>Ничего не найдено.</p>');
+                    resultsDiv.append('<p>По вашим критериям рецептов не найдено.</p>');
                     return;
                 }
 
                 recipes.forEach(recipe => {
-                    const missingIngredient = recipe.missingIngredient
-                        ? `<p><strong>Не хватает:</strong> ${recipe.missingIngredient}</p>`
+                    const missingHtml = recipe.missingIngredient 
+                        ? `<p class="missing-ingredient">Не хватает: ${recipe.missingIngredient}</p>` 
                         : '';
 
-                    const recipeHtml = `
+                    resultsDiv.append(`
                         <div class="recipe">
                             <h3>${recipe.name}</h3>
                             <img src="${recipe.photo}" alt="${recipe.name}" />
                             <p>Время приготовления: ${recipe.cookingTime} минут</p>
-                            ${missingIngredient}
-                            <a href="${recipe.url}" target="_blank">Перейти к рецепту</a>
+                            ${missingHtml}
+                            <a href="${recipe.url}" target="_blank" class="btn btn-secondary">Открыть рецепт</a>
                         </div>
-                    `;
-                    resultsDiv.append(recipeHtml);
+                    `);
                 });
             }
         });

@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RecipeFinder.BusinessLogic")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1ff6b1a6685f4ba168750aa517f0f9ff6c1fa5e8")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53de9376eec5e6dbaf644b80d26e6fb28fa3b0b6")]
 [assembly: System.Reflection.AssemblyProductAttribute("RecipeFinder.BusinessLogic")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RecipeFinder.BusinessLogic")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
