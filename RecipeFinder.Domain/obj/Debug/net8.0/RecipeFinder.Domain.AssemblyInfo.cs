@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RecipeFinder.Domain")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+53de9376eec5e6dbaf644b80d26e6fb28fa3b0b6")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+7cd22b5d964056b043405113b1d9c094f3fc82ed")]
 [assembly: System.Reflection.AssemblyProductAttribute("RecipeFinder.Domain")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RecipeFinder.Domain")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

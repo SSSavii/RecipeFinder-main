@@ -48,6 +48,29 @@
             display: none;
             margin: 20px;
         }
+        .missing-ingredient {
+            color: #d32f2f;
+            font-style: italic;
+            margin: 8px 0;
+        }
+        .ingredients-list, .instructions-list {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+        .ingredients-list li, .instructions-list li {
+            margin-bottom: 5px;
+        }
+        .recipe-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        .section-title {
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -128,22 +151,26 @@
                     contentType: 'application/json',
                     data: JSON.stringify(ingredients),
                     success: function (response) {
-                        if (response.success) {
-                            displayRecipes(response.data);
-                        } else {
-                            alert('Ошибка: ' + response.message);
+                        console.log('Server response:', response);
+                        
+                        try {
+                            const recipes = typeof response === 'string' ? JSON.parse(response) : response;
+                            
+                            if (Array.isArray(recipes)) {
+                                displayRecipes(recipes);
+                            } else if (recipes.data && Array.isArray(recipes.data)) {
+                                displayRecipes(recipes.data);
+                            } else {
+                                throw new Error('Неверный формат данных рецептов');
+                            }
+                        } catch (e) {
+                            console.error('Error parsing response:', e);
+                            $('#results').html('<p>Ошибка при обработке данных с сервера</p>');
                         }
                     },
                     error: function (xhr) {
-                        let errorMsg = 'Произошла ошибка при поиске';
-                        try {
-                            const response = JSON.parse(xhr.responseText);
-                            errorMsg += ': ' + response.message;
-                        } catch (e) {
-                            errorMsg += ' (код ' + xhr.status + ')';
-                        }
-                        alert(errorMsg);
-                        console.error('Error details:', xhr);
+                        console.error('Error details:', xhr.responseText);
+                        $('#results').html('<p>Ошибка при загрузке рецептов</p>');
                     },
                     complete: function () {
                         $('#loading-spinner').hide();
@@ -181,25 +208,102 @@
                 const resultsDiv = $('#results');
                 resultsDiv.empty();
 
+                if (!Array.isArray(recipes)) {
+                    resultsDiv.append('<p>Ошибка: неверный формат данных рецептов</p>');
+                    return;
+                }
+
                 if (recipes.length === 0) {
                     resultsDiv.append('<p>По вашим критериям рецептов не найдено.</p>');
                     return;
                 }
 
                 recipes.forEach(recipe => {
-                    const missingHtml = recipe.missingIngredient 
-                        ? `<p class="missing-ingredient">Не хватает: ${recipe.missingIngredient}</p>` 
-                        : '';
+                    try {
+                        // Время приготовления
+                        const cookingTime = recipe.cookingTime || recipe.cooking_time_minutes 
+                            ? `${recipe.cookingTime || recipe.cooking_time_minutes} минут` 
+                            : 'не указано';
+                        
+                        // Недостающие ингредиенты
+                        let missingHtml = '';
+                        const missingIngredients = Array.isArray(recipe.missingIngredients) ? recipe.missingIngredients : [];
+                        if (missingIngredients.length > 0) {
+                            const missingText = missingIngredients.length === 1 
+                                ? `Не хватает: ${missingIngredients[0]}`
+                                : `Не хватает: ${missingIngredients.join(', ')}`;
+                            
+                            missingHtml = `<p class="missing-ingredient">${missingText}</p>`;
+                        }
 
-                    resultsDiv.append(`
-                        <div class="recipe">
-                            <h3>${recipe.name}</h3>
-                            <img src="${recipe.photo}" alt="${recipe.name}" />
-                            <p>Время приготовления: ${recipe.cookingTime} минут</p>
-                            ${missingHtml}
-                            <a href="${recipe.url}" target="_blank" class="btn btn-secondary">Открыть рецепт</a>
-                        </div>
-                    `);
+                        // Ингредиенты
+                        let ingredientsHtml = '';
+                        const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+                        if (ingredients.length > 0) {
+                            ingredientsHtml = `
+                                <div class="section-title">Ингредиенты:</div>
+                                <ul class="ingredients-list">
+                                    ${ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                                </ul>
+                            `;
+                        }
+
+                        // Шаги приготовления - улучшенная обработка разных форматов
+                        let instructionsHtml = '';
+                        let instructions = [];
+                        
+                        // Обработка случая, когда instructions приходит как System.Collections.Generic.List
+                        if (typeof recipe.instructions === 'string' && recipe.instructions.startsWith('System.Collections.Generic.List')) {
+                            // Попробуем извлечь данные из нестандартного формата
+                            try {
+                                const match = recipe.instructions.match(/\[(.*?)\]/);
+                                if (match && match[1]) {
+                                    instructions = match[1].split(',').map(item => item.trim());
+                                }
+                            } catch (e) {
+                                console.error('Error parsing List format:', e);
+                            }
+                        }
+                        // Если instructions строка, попробуем разбить по переносам строк
+                        else if (typeof recipe.instructions === 'string') {
+                            instructions = recipe.instructions.split('\n').filter(step => step.trim() !== '');
+                        } 
+                        // Если это массив - используем как есть
+                        else if (Array.isArray(recipe.instructions)) {
+                            instructions = recipe.instructions;
+                        }
+                        // Если это объект .NET List (может приходить как { "item1", "item2" })
+                        else if (recipe.instructions && typeof recipe.instructions === 'object') {
+                            instructions = Object.values(recipe.instructions);
+                        }
+
+                        if (instructions.length > 0) {
+                            instructionsHtml = `
+                                <div class="section-title">Способ приготовления:</div>
+                                <ol class="instructions-list">
+                                    ${instructions.map(step => `<li>${step}</li>`).join('')}
+                                </ol>
+                            `;
+                        }
+
+                        // Сборка карточки рецепта
+                        resultsDiv.append(`
+                            <div class="recipe">
+                                <h3>${recipe.name || recipe.title || 'Без названия'}</h3>
+                                ${recipe.photo || recipe.photo_link 
+                                    ? `<img src="${recipe.photo || recipe.photo_link}" alt="${recipe.name || recipe.title || ''}" class="recipe-image" />` 
+                                    : ''}
+                                <p>Время приготовления: ${cookingTime}</p>
+                                ${missingHtml}
+                                ${ingredientsHtml}
+                                ${instructionsHtml}
+                                ${recipe.url ? `<a href="${recipe.url}" target="_blank" class="btn btn-secondary">Открыть рецепт</a>` : ''}
+                            </div>
+                        `);
+                    } catch (e) {
+                        console.error('Error displaying recipe:', e, recipe);
+                        resultsDiv.append(`<div class="recipe"><h3>Ошибка при отображении рецепта</h3><p>${e.message}</p></div>`);
+                    }
                 });
             }
         });

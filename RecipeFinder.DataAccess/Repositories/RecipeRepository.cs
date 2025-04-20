@@ -101,7 +101,7 @@ namespace RecipeFinder.DataAccess.Repositories
         WITH r, COLLECT(i.name) AS recipe_ingredients, available_ingredients
         WITH r, recipe_ingredients, available_ingredients,
              [ri IN recipe_ingredients WHERE NOT ri IN available_ingredients] AS missing_ingredients
-        WHERE SIZE(missing_ingredients) <= 1
+        WHERE SIZE(missing_ingredients) <= 2
         RETURN r.title AS title, r.url AS url, r.photo_link AS photo, 
                r.cooking_time AS cooking_time, r.instructions AS instructions,
                CASE WHEN SIZE(missing_ingredients) > 0 THEN missing_ingredients[0] ELSE null END AS missing_ingredient";
