@@ -89,8 +89,7 @@
                 <div id="ingredient-dropdown"></div>
             </div>
 
-            <button id="search-button" class="btn btn-primary">Найти рецепты</button>
-            <div id="loading-spinner">Загрузка...</div>
+            <div id="loading-spinner" class="hidden">Поиск рецептов...</div>
         </div>
 
         <div id="results" class="results-container"></div>
@@ -114,36 +113,33 @@
                 updateDropdown(filtered);
             });
 
-            // Добавление ингредиента
+            // Добавление ингредиента и автоматический поиск
             $(document).on('click', '.dropdown-item', function () {
                 const ingredient = $(this).text();
                 if (!selectedIngredients.has(ingredient)) {
                     selectedIngredients.add(ingredient);
                     updateSelectedIngredients();
+                    searchRecipes();
                 }
                 $('#ingredient-input').val('').focus();
                 $('#ingredient-dropdown').empty();
             });
 
-            // Удаление ингредиента
+            // Удаление ингредиента и автоматический поиск
             $(document).on('click', '.remove-ingredient', function () {
                 const ingredient = $(this).data('ingredient');
                 selectedIngredients.delete(ingredient);
                 updateSelectedIngredients();
+                if (selectedIngredients.size > 0) {
+                    searchRecipes();
+                } else {
+                    $('#results').empty();
+                }
             });
 
-            // Поиск рецептов
-            $('#search-button').on('click', function () {
-                if (selectedIngredients.size === 0) {
-                    alert('Пожалуйста, выберите хотя бы один ингредиент');
-                    return;
-                }
-
+            function searchRecipes() {
                 const ingredients = Array.from(selectedIngredients);
                 console.log('Searching for:', ingredients);
-
-                $('#loading-spinner').show();
-                $('#results').empty();
 
                 $.ajax({
                     url: '/Recipe/SearchWithMissing',
@@ -165,18 +161,15 @@
                             }
                         } catch (e) {
                             console.error('Error parsing response:', e);
-                            $('#results').html('<p>Ошибка при обработке данных с сервера</p>');
+                            $('#results').append('<p>Ошибка при обработке данных с сервера</p>');
                         }
                     },
                     error: function (xhr) {
                         console.error('Error details:', xhr.responseText);
-                        $('#results').html('<p>Ошибка при загрузке рецептов</p>');
-                    },
-                    complete: function () {
-                        $('#loading-spinner').hide();
+                        $('#results').append('<p>Ошибка при загрузке рецептов</p>');
                     }
                 });
-            });
+            }
 
             function updateSelectedIngredients() {
                 const container = $('#selected-ingredients-container');
@@ -206,105 +199,99 @@
 
             function displayRecipes(recipes) {
                 const resultsDiv = $('#results');
-                resultsDiv.empty();
+                
+                // Не очищаем результаты, а добавляем новые
+                const newResults = $('<div>').attr('id', 'new-results');
 
                 if (!Array.isArray(recipes)) {
-                    resultsDiv.append('<p>Ошибка: неверный формат данных рецептов</p>');
+                    newResults.append('<p>Ошибка: неверный формат данных рецептов</p>');
                     return;
                 }
 
                 if (recipes.length === 0) {
-                    resultsDiv.append('<p>По вашим критериям рецептов не найдено.</p>');
-                    return;
+                    newResults.append('<p>По вашим критериям рецептов не найдено.</p>');
+                } else {
+                    recipes.forEach(recipe => {
+                        try {
+                            const cookingTime = recipe.cookingTime || recipe.cooking_time_minutes 
+                                ? `${recipe.cookingTime || recipe.cooking_time_minutes} минут` 
+                                : 'не указано';
+                            
+                            let missingHtml = '';
+                            const missingIngredients = Array.isArray(recipe.missingIngredients) ? recipe.missingIngredients : [];
+                            if (missingIngredients.length > 0) {
+                                const missingText = missingIngredients.length === 1 
+                                    ? `Не хватает: ${missingIngredients[0]}`
+                                    : `Не хватает: ${missingIngredients.join(', ')}`;
+                                
+                                missingHtml = `<p class="missing-ingredient">${missingText}</p>`;
+                            }
+
+                            let ingredientsHtml = '';
+                            const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
+                            if (ingredients.length > 0) {
+                                ingredientsHtml = `
+                                    <div class="section-title">Ингредиенты:</div>
+                                    <ul class="ingredients-list">
+                                        ${ingredients.map(ing => `<li>${ing}</li>`).join('')}
+                                    </ul>
+                                `;
+                            }
+
+                            let instructionsHtml = '';
+                            let instructions = [];
+                            
+                            if (typeof recipe.instructions === 'string' && recipe.instructions.startsWith('System.Collections.Generic.List')) {
+                                try {
+                                    const match = recipe.instructions.match(/\[(.*?)\]/);
+                                    if (match && match[1]) {
+                                        instructions = match[1].split(',').map(item => item.trim());
+                                    }
+                                } catch (e) {
+                                    console.error('Error parsing List format:', e);
+                                }
+                            }
+                            else if (typeof recipe.instructions === 'string') {
+                                instructions = recipe.instructions.split('\n').filter(step => step.trim() !== '');
+                            } 
+                            else if (Array.isArray(recipe.instructions)) {
+                                instructions = recipe.instructions;
+                            }
+                            else if (recipe.instructions && typeof recipe.instructions === 'object') {
+                                instructions = Object.values(recipe.instructions);
+                            }
+
+                            if (instructions.length > 0) {
+                                instructionsHtml = `
+                                    <div class="section-title">Способ приготовления:</div>
+                                    <ol class="instructions-list">
+                                        ${instructions.map(step => `<li>${step}</li>`).join('')}
+                                    </ol>
+                                `;
+                            }
+
+                            newResults.append(`
+                                <div class="recipe">
+                                    <h3>${recipe.name || recipe.title || 'Без названия'}</h3>
+                                    ${recipe.photo || recipe.photo_link 
+                                        ? `<img src="${recipe.photo || recipe.photo_link}" alt="${recipe.name || recipe.title || ''}" class="recipe-image" />` 
+                                        : ''}
+                                    <p>Время приготовления: ${cookingTime}</p>
+                                    ${missingHtml}
+                                    ${ingredientsHtml}
+                                    ${instructionsHtml}
+                                    ${recipe.url ? `<a href="${recipe.url}" target="_blank" class="btn btn-secondary">Открыть рецепт</a>` : ''}
+                                </div>
+                            `);
+                        } catch (e) {
+                            console.error('Error displaying recipe:', e, recipe);
+                            newResults.append(`<div class="recipe"><h3>Ошибка при отображении рецепта</h3><p>${e.message}</p></div>`);
+                        }
+                    });
                 }
 
-                recipes.forEach(recipe => {
-                    try {
-                        // Время приготовления
-                        const cookingTime = recipe.cookingTime || recipe.cooking_time_minutes 
-                            ? `${recipe.cookingTime || recipe.cooking_time_minutes} минут` 
-                            : 'не указано';
-                        
-                        // Недостающие ингредиенты
-                        let missingHtml = '';
-                        const missingIngredients = Array.isArray(recipe.missingIngredients) ? recipe.missingIngredients : [];
-                        if (missingIngredients.length > 0) {
-                            const missingText = missingIngredients.length === 1 
-                                ? `Не хватает: ${missingIngredients[0]}`
-                                : `Не хватает: ${missingIngredients.join(', ')}`;
-                            
-                            missingHtml = `<p class="missing-ingredient">${missingText}</p>`;
-                        }
-
-                        // Ингредиенты
-                        let ingredientsHtml = '';
-                        const ingredients = Array.isArray(recipe.ingredients) ? recipe.ingredients : [];
-                        if (ingredients.length > 0) {
-                            ingredientsHtml = `
-                                <div class="section-title">Ингредиенты:</div>
-                                <ul class="ingredients-list">
-                                    ${ingredients.map(ing => `<li>${ing}</li>`).join('')}
-                                </ul>
-                            `;
-                        }
-
-                        // Шаги приготовления - улучшенная обработка разных форматов
-                        let instructionsHtml = '';
-                        let instructions = [];
-                        
-                        // Обработка случая, когда instructions приходит как System.Collections.Generic.List
-                        if (typeof recipe.instructions === 'string' && recipe.instructions.startsWith('System.Collections.Generic.List')) {
-                            // Попробуем извлечь данные из нестандартного формата
-                            try {
-                                const match = recipe.instructions.match(/\[(.*?)\]/);
-                                if (match && match[1]) {
-                                    instructions = match[1].split(',').map(item => item.trim());
-                                }
-                            } catch (e) {
-                                console.error('Error parsing List format:', e);
-                            }
-                        }
-                        // Если instructions строка, попробуем разбить по переносам строк
-                        else if (typeof recipe.instructions === 'string') {
-                            instructions = recipe.instructions.split('\n').filter(step => step.trim() !== '');
-                        } 
-                        // Если это массив - используем как есть
-                        else if (Array.isArray(recipe.instructions)) {
-                            instructions = recipe.instructions;
-                        }
-                        // Если это объект .NET List (может приходить как { "item1", "item2" })
-                        else if (recipe.instructions && typeof recipe.instructions === 'object') {
-                            instructions = Object.values(recipe.instructions);
-                        }
-
-                        if (instructions.length > 0) {
-                            instructionsHtml = `
-                                <div class="section-title">Способ приготовления:</div>
-                                <ol class="instructions-list">
-                                    ${instructions.map(step => `<li>${step}</li>`).join('')}
-                                </ol>
-                            `;
-                        }
-
-                        // Сборка карточки рецепта
-                        resultsDiv.append(`
-                            <div class="recipe">
-                                <h3>${recipe.name || recipe.title || 'Без названия'}</h3>
-                                ${recipe.photo || recipe.photo_link 
-                                    ? `<img src="${recipe.photo || recipe.photo_link}" alt="${recipe.name || recipe.title || ''}" class="recipe-image" />` 
-                                    : ''}
-                                <p>Время приготовления: ${cookingTime}</p>
-                                ${missingHtml}
-                                ${ingredientsHtml}
-                                ${instructionsHtml}
-                                ${recipe.url ? `<a href="${recipe.url}" target="_blank" class="btn btn-secondary">Открыть рецепт</a>` : ''}
-                            </div>
-                        `);
-                    } catch (e) {
-                        console.error('Error displaying recipe:', e, recipe);
-                        resultsDiv.append(`<div class="recipe"><h3>Ошибка при отображении рецепта</h3><p>${e.message}</p></div>`);
-                    }
-                });
+                // Заменяем старые результаты новыми
+                resultsDiv.html(newResults.html());
             }
         });
     </script>
