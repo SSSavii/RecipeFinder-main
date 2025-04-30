@@ -8,8 +8,11 @@ namespace RecipeFinder.Domain.Models
         public string Url { get; set; }
         public string Photo { get; set; }
         public int CookingTime { get; set; }
-        public string Instructions { get; set; }
+        // Список шагов приготовления
+        public List<string> Instructions { get; set; } = new List<string>();
         public string MissingIngredient { get; set; }
-        public List<Ingredient> Ingredients { get; set; } = new List<Ingredient>();
+        // Изменено: список ингредиентов теперь представлен списком строк,
+        // содержащих названия ингредиентов.
+        public List<string> Ingredients { get; set; } = new List<string>();
     }
 }
